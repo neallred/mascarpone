@@ -15,7 +15,7 @@ app = Flask(
 )
 
 def write_new_blacklist(new_blacklist):
-    with open("./current_blacklist.json", "w") as f:
+    with open("./current_blacklist.json", "w+") as f:
         f.write(json.dumps(new_blacklist))
 
     update_filter_config(new_blacklist)
@@ -110,14 +110,22 @@ def reset():
 
 
 def get_current_blacklist_string():
-    with open("./current_blacklist.json", "r") as f:
-        return f.read()
+    try:
+        with open("./current_blacklist.json", "r") as f:
+            return f.read()
+    except FileNotFoundError as e:
+        print("current blacklist not found. Bootstrapping:")
+        print(e.message)
+        set_blacklist_to_predefined()
+
+        with open("./current_blacklist.json", "r") as f:
+            return f.read()
 
 
 def set_blacklist_to_predefined():
     with open("./preconfigured_blacklist.json", "r") as f:
         write_new_blacklist(json.loads(f.read()))
-        
+
 
 # def get_current_blacklist():
 #     return json.loads(get_current_blacklist_string())

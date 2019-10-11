@@ -4,6 +4,7 @@ import socket
 import pwd
 import re
 import subprocess
+import json
 # of format ['ls', '-l']
 def execute_command(command_and_args_list):
     return subprocess.run(command_and_args_list, stdout=subprocess.PIPE)
@@ -79,7 +80,7 @@ def update_filter_config(new_blacklist):
 
     write_file(FILTERER_CONFIG_ADDRESS, new_dnsmasq_config)
 
-    get_command_output(['sudo', 'systemctl', 'restart', 'dnsmasq'])
+    # get_command_output(['sudo', 'systemctl', 'restart', 'dnsmasq'])
 
 
 def format_entry(entry):
