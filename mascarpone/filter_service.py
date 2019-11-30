@@ -123,7 +123,7 @@ def make_daemon_service_file(path_to_virtual_env):
 # Human readable name of the unit
 Description=Mascarpone DNSMasq UI wrapper
 After=network-online.target dnsmasq
-After=network-online.target dnsmasq
+# After=network-online.target dnsmasq
 
 [Service]
 # Command to execute when the service is started
