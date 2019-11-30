@@ -11,7 +11,7 @@ from mascarpone.validators import validate_upsert, validate_delete, validate_upd
 own_path = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(
-    __name__, template_folder=f"{own_path}/templates"
+    __name__, template_folder=f"{own_path}/templates/"
 )
 
 def write_new_blacklist(new_blacklist):
@@ -28,7 +28,7 @@ def index():
     current_blacklist_string = get_current_blacklist_string()
 
     if request.method == "GET":
-        return render_template("build/index.html", blacklist=current_blacklist_string)
+        return render_template("./index.html", blacklist=current_blacklist_string)
 
     current_blacklist = json.loads(current_blacklist_string)
     app.logger.info(current_blacklist)
@@ -95,8 +95,8 @@ def index():
             app.logger.info("Writing new values to source of truth file and dnsmasq.conf")
             write_new_blacklist(current_blacklist)
         except Exception as err:
-            app.logger.error("err updating items")
-            return err.message, 500
+            app.logger.error(f"err deleting domain {domain}")
+            return repr(err), 500
 
         return current_blacklist
 
@@ -113,9 +113,9 @@ def get_current_blacklist_string():
     try:
         with open("./current_blacklist.json", "r") as f:
             return f.read()
-    except FileNotFoundError as e:
+    except FileNotFoundError as err:
         print("current blacklist not found. Bootstrapping:")
-        print(e.message)
+        print(repr(err))
         set_blacklist_to_predefined()
 
         with open("./current_blacklist.json", "r") as f:

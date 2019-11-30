@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!-- This is a dummy used for webpack. -->
+<!-- The python server uses a jinja template -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Mascarpone Internet Filter</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      window.pageLoadBlacklist = {
+        "evil.com": {
+          redirect: "127.0.0.1",
+          updated: 1234567890,
+        },
+        "doubleclick.net": {
+          redirect: "127.0.0.1",
+          updated: 1234567890,
+        },
+      };
+    </script>
+    <script src="Index.js"></script>
+  </body>
+</html>
