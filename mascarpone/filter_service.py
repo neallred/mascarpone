@@ -31,7 +31,7 @@ def get_ip():
 
 def get_virtual_env():
     # TODO: Is this robust enough?
-    return f"{PATH_TO_HOME}/.pyenv/versions/mascarpone/"
+    return f"{PATH_TO_HOME}/.pyenv/versions/mascarpone"
     # virtual_envs = get_command_output(['pyenv', 'virtualenvs'])
     # smaller_container =  re.search(r'mascarpone(.*?)\n', virtual_envs).group(1)
     # virtal_env =  re.search(r'/[a-zA-Z-_0-9/.]*', smaller_container)
@@ -50,7 +50,10 @@ NAMESERVER_PORT = "53"  # Leave as 53
 CACHE_SIZE = "1000"  # Max size of domain lookups to cache
 PRIMARY_NAME_SERVER = "205.171.3.65" # Century Link
 SECONDARY_NAME_SERVER = "1.1.1.1" # Cloudflare
-FILTERER_CONFIG_ADDRESS = "./dnsmasq.conf"
+
+own_path = os.path.dirname(os.path.abspath(__file__))
+
+FILTERER_CONFIG_ADDRESS = f"{own_path}/../dnsmasq.conf"
 DNS_MASQ_CONFIG_HEADER = f"""
 # Listen on this specific port instead of the standard DNS port
 # (53). Setting this to zero completely disables DNS function,
@@ -69,7 +72,6 @@ cache-size={CACHE_SIZE}
 listen-address=::1,{LOOPBACK_ADDRESS},{OWN_LOCAL_ADDRESS}
 """
 
-own_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def write_file(filename, data):
@@ -91,7 +93,7 @@ def format_entry(entry):
 
 
 def make_dnsmasq_config_default():
-    with open("./preconfigured_blacklist.json", "r") as f:
+    with open(f"{own_path}/../preconfigured_blacklist.json", "r") as f:
         preconfigured_blacklist = json.loads(f.read())
     return make_dnsmasq_config(preconfigured_blacklist)
 

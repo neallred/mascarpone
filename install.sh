@@ -189,6 +189,10 @@ Some common third party DNS servers are:
 
 Make sure to confirm the third party nameserver's IP address before using.
 
+If the install machine's IP address is $INSTALL_MACHINE_IP,
+you should be able configure the mascarpone internet filterer
+on devices connected to your home network from $INSTALL_MACHINE_IP:8080
+
 MANUAL_SETUP_STEPS
 }
 
