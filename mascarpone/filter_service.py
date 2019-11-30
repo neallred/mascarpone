@@ -30,10 +30,12 @@ def get_ip():
     return IP
 
 def get_virtual_env():
-    virtual_envs = get_command_output(['pyenv', 'virtualenvs'])
-    smaller_container =  re.search(r'mascarpone(.*?)\n', virtual_envs).group(1)
-    virtal_env =  re.search(r'/[a-zA-Z-_0-9/.]*', smaller_container)
-    return smaller_container[virtal_env.start():virtal_env.end()]
+    # TODO: Is this robust enough?
+    return f"{PATH_TO_HOME}/.pyenv/versions/mascarpone/"
+    # virtual_envs = get_command_output(['pyenv', 'virtualenvs'])
+    # smaller_container =  re.search(r'mascarpone(.*?)\n', virtual_envs).group(1)
+    # virtal_env =  re.search(r'/[a-zA-Z-_0-9/.]*', smaller_container)
+    # return smaller_container[virtal_env.start():virtal_env.end()]
 
 
 USER_NAME=get_username()

@@ -25,21 +25,28 @@ remove_mascarpone() {
 stop_dnsmasq() {
   log_step "Stopping dnsmasq"
 
+  sudo systemctl disable dnsmasq
+  sudo systemctl stop dnsmasq
 }
 
 remove_dnsmasq() {
   log_step "Removing dnsmasq"
+  local DNS_MASQ_INSTALL_ONE_LINE=$(echo $INSTALL_LIST_DNS_MASQ)
 
   echo "Removing $PATH_SYSTEM_SUDOERS_CONF"
   sudo rm -f $PATH_SYSTEM_SUDOERS_CONF
 
   echo "Removing $PATH_SYSTEM_DNS_MASQ_CONF"
   sudo rm -f $PATH_SYSTEM_DNS_MASQ_CONF
+
+  echo "Uninstalling $DNS_MASQ_INSTALL_ONE_LINE"
+  $PACKAGE_UNINSTALL $DNS_MASQ_INSTALL_ONE_LINE
 }
 
 inform_full_delete_command() {
   local DEPS_ONE_LINE=$(echo $SYSTEM_DEPS_RASPBIAN)
   cat << FULL_DELETE_INSTRUCTIONS
+
 Uninstall complete.
 
 Uninstall did not remove these system dependencies:

@@ -1,5 +1,6 @@
 #!/bin/bash
 log_step() {
+  echo
   echo "$1..."
   echo
 }
@@ -17,7 +18,7 @@ PATH_USER_MASCARPONE_SERVICE_CONF="$HOME/.config/systemd/user/mascarpone.service
 
 PACKAGE_INSTALL=""
 PACKAGE_UNINSTALL=""
-PACKAGE_UPGRADE=""
+PACKAGE_UPDATE=""
 
 INSTALL_LIST_DNS_MASQ="\
   dnsmasq
@@ -47,32 +48,32 @@ set_package_manager() {
   if command -v apt >/dev/null 2>&1; then
     PKGR="sudo apt"
     PACKAGE_INSTALL="$PKGR install -y"
-    PACKAGE_UPGRADE="$PKGR update && $PKGR upgrade -y"
+    PACKAGE_UPDATE="$PKGR update"
     PACKAGE_UNINSTALL="$PKGR remove -y"
 
   elif command -v apt-get >/dev/null 2>&1; then
     # apt is newer. If not available, fall back to apt-get
     PKGR="sudo apt-get"
     PACKAGE_INSTALL="$PKGR install -y"
-    PACKAGE_UPGRADE="$PKGR update && $PKGR upgrade -y"
+    PACKAGE_UPDATE="$PKGR update"
     PACKAGE_UNINSTALL="$PKGR remove -y"
 
   elif command -v pacman >/dev/null 2>&1; then
     PKGR="sudo pacman"
     PACKAGE_INSTALL="$PKGR -S"
-    PACKAGE_UPGRADE="$PKGR -Syu"
+    PACKAGE_UPDATE="$PKGR -Syu"
     PACKAGE_UNINSTALL="$PKGR -Rs"
 
   elif command -v brew >/dev/null 2>&1; then
     PKGR="brew"
     PACKAGE_INSTALL="$PKGR install"
-    PACKAGE_UPGRADE="$PKGR update && $PKGR upgrade"
+    PACKAGE_UPDATE="$PKGR update"
     PACKAGE_UNINSTALL="$PKGR remove"
 
   elif command -v yum >/dev/null 2>&1; then
     PKGR="sudo yum"
     PACKAGE_INSTALL="$PKGR install"
-    PACKAGE_UPGRADE="$PKGR update"
+    PACKAGE_UPDATE="$PKGR update"
     PACKAGE_UNINSTALL="$PKGR remove"
 
   else

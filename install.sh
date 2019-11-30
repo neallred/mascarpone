@@ -7,13 +7,13 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 ensure_system_deps() {
   log_step "Installing system deps if needed"
-  $PACKAGE_UPGRADE
+  $PACKAGE_UPDATE
   $PACKAGE_INSTALL $SYSTEM_DEPS_RASPBIAN
 }
 
 ensure_dnsmasq() {
   log_step "Installing dnsmasq if needed"
-  $PACKAGE_UPGRADE
+  $PACKAGE_UPDATE
   $PACKAGE_INSTALL $INSTALL_LIST_DNS_MASQ
 }
 
@@ -143,13 +143,14 @@ ensure_mascarpone_daemon() {
 log_manual_setup_steps() {
   INSTALL_MACHINE_IP=$(hostname -I | cut -d' ' -f1)
   cat << MANUAL_SETUP_STEPS
+
 Install complete.
 
-To have devices actually use this nameserver,
-you must configure your router to use this machine as the primary nameserver
-and a third party service as the secondary nameserver.
+To have devices use the device mascarpone was installed on as a nameserver,
+you must configure your router to use the install machine as primary nameserver
+and a third party service as secondary nameserver.
 
-Typical steps for configuring the router to use a given address as a nameserver:
+Typical steps for configuring the router are:
 
 1. Login to the router with the router admin's username and password.
    If you have not changed these, they can often be found on a sticker label
@@ -167,8 +168,10 @@ Typical steps for configuring the router to use a given address as a nameserver:
    setup does not work correctly or something later malfunctions.
 
 5. As the primary nameserver, enter the local IP address of the machine that
-   mascarpone is installed on. Based on this script's detection, it seems to
-   be $INSTALL_MACHINE_IP
+   mascarpone is installed on. Based on this script's detection, it seems to be:
+
+   $INSTALL_MACHINE_IP
+
    If an option to choose a port exists, use port 53. If no option is given,
    then the router assumes port 53 by default.
 
