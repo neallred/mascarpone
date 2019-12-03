@@ -1,26 +1,18 @@
 # [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 
-# DEFINE STUFF SECTION
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/utils.sh"
 
 ensure_system_deps() {
   log_step "Installing system deps if needed"
-  $PACKAGE_UPDATE
-  $PACKAGE_INSTALL $SYSTEM_DEPS_RASPBIAN
+  install_if_needed $SYSTEM_DEPS_RASPBIAN
 }
 
 ensure_dnsmasq() {
   log_step "Installing dnsmasq if needed"
-  $PACKAGE_UPDATE
-  $PACKAGE_INSTALL $INSTALL_LIST_DNS_MASQ
-}
 
-start_dnsmasq() {
-  dnsmasq --test
-  sudo systemctl enable dnsmasq
-  sudo systemctl start dnsmasq
+  install_if_needed $INSTALL_LIST_DNS_MASQ
 }
 
 install_poetry() {
@@ -54,7 +46,6 @@ ensure_python() {
   # if they do
 
   log_step "Installing python and pip if needed"
-  echo "Entering project directory \"$PATH_PROJECT\"...\n"
   if command -v python >/dev/null 2>&1; then
     echo "python already installed at $(which python)"
   else
@@ -82,7 +73,7 @@ ensure_javascript() {
     npm install -g yarn
   fi
   if command -v yarn >/dev/null 2>&1; then
-    echo "nvm already installed at $(which nvm)"
+    echo "yarn already installed at $(which yarn)"
   else
     npm install -g yarn
   fi
@@ -92,33 +83,55 @@ ensure_javascript() {
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 }
 
-build_project() {
-  git pull
-
+back_end_build() {
+  log_step "Building back end"
   ensure_python
   ensure_pyenv
 
-  # alias pyenv="~/.pyenv/bin/pyenv"
-
-  # pyenv install 3.7.4 --force
   pyenv install 3.7.4 --skip-existing
   pyenv virtualenv 3.7.4 mascarpone || true
   pyenv local mascarpone
 
   install_poetry
-  source $HOME/.poetry/env
-  poetry install
+  if [ -e $HOME/.poetry/env ]; then
+    source $HOME/.poetry/env
+  fi
 
-  ensure_javascript
-  yarn
-  yarn build
+  poetry install
 }
 
-# start_web_server() {
-#   python $PATH_PROJECT/mascarpone/main.py
-# }
-# start_web_server
+front_end_build() {
+  log_step "Building front end"
+  # The front end build relies on bs-platform, which requires a 64-bit
+  # architecture. See the following issues for more details:
+  # https://github.com/BuckleScript/bucklescript/issues/773
+  # https://github.com/BuckleScript/bucklescript/issues/2423
 
+  if check_is_64_bit; then
+    ensure_javascript
+    yarn
+    yarn build
+  else
+    local JS_BUNDLE_PATH="<PROJECT ROOT>/mascarpone/static/Index.js"
+
+    cat << SKIP_JS_BUILD_EXPLANATION
+
+Javascript build skipped; system architecture is not 64-bit.
+Assuming Javascript bundle exists at $JS_BUNDLE_PATH.
+If it does not, the server will work but will not be accessible by web browser.
+
+SKIP_JS_BUILD_EXPLANATION
+  fi
+}
+
+build_project() {
+  log_step "building project"
+  git pull > /dev/null
+
+  back_end_build
+
+  front_end_build
+}
 
 make_sudoers_file() {
   SYSTEM_CTL_PATH=$(which systemctl)
@@ -128,7 +141,7 @@ make_sudoers_file() {
   Cmnd_Alias DNS_MASQ_CMD = $SYSTEM_CTL_PATH start dnsmasq, $SYSTEM_CTL_PATH stop dnsmasq, $SYSTEM_CTL_PATH restart dnsmasq, $SYSTEM_CTL_PATH status dnsmasq, $SYSTEM_CTL_PATH reload dnsmasq\n$ME ALL=(ALL) NOPASSWD: DNS_MASQ_CMD"
 
   sudo mkdir -p $PATH_SYSTEM_SUDOERS_FOLDER
-  echo -e $SUDOERS_FILE | sudo tee $PATH_SYSTEM_SUDOERS_CONF
+  echo -e $SUDOERS_FILE | sudo tee $PATH_SYSTEM_SUDOERS_CONF >/dev/null
 }
 
 symlink_dnsmasq_conf() {
@@ -142,9 +155,11 @@ ensure_mascarpone_daemon() {
 
 log_manual_setup_steps() {
   INSTALL_MACHINE_IP=$(hostname -I | cut -d' ' -f1)
-  cat << MANUAL_SETUP_STEPS
 
-Install complete.
+  echo
+  echo -e "\e[1;32mInstall complete.\e[0m"
+
+  cat << MANUAL_SETUP_STEPS
 
 To have devices use the device mascarpone was installed on as a nameserver,
 you must configure your router to use the install machine as primary nameserver
@@ -200,7 +215,6 @@ MANUAL_SETUP_STEPS
 main () {
   enter_project
   symlink_dnsmasq_conf
-  set_package_manager
   ensure_system_deps
   ensure_dnsmasq
   build_project
