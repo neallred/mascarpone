@@ -165,3 +165,5 @@ src/**/tmp
 client/**/tmp
 mascarpone/static/*
 !mascarpone/static/.gitkeep
+/target
+**/*.rs.bk
