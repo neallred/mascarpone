@@ -5,7 +5,7 @@
     "react-jsx": 3
   },
   "sources": {
-    "dir" : "src",
+    "dir" : "client",
     "subdirs" : true
   },
   "package-specs": [{

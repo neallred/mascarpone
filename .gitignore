@@ -162,5 +162,6 @@ npm-debug.log
 
 tmp/
 src/**/tmp
+client/**/tmp
 mascarpone/static/*
 !mascarpone/static/.gitkeep

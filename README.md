@@ -16,9 +16,7 @@ npm start
 npm run webpack
 ```
 
-After you see the webpack compilation succeed (the `npm run webpack` step), open up `build/index.html` (**no server needed!**). Then modify whichever `.re` file in `src` and refresh the page to see the changes.
-
-**For more elaborate ReasonReact examples**, please see https://github.com/reasonml-community/reason-react-example
+After you see the webpack compilation succeed (the `npm run webpack` step), open up `build/index.html` (**no server needed!**). Then modify whichever `.re` file in `client` and refresh the page to see the changes.
 
 ## Run Project with Server
 
@@ -35,9 +33,3 @@ npm run clean
 npm run build
 npm run webpack:production
 ```
-
-This will replace the development artifact `build/Index.js` for an optimized version as well as copy `src/index.html` into `build/`. You can then deploy the contents of the `build` directory (`index.html` and `Index.js`).
-
-If you make use of routing (via `ReasonReact.Router` or similar logic) ensure that server-side routing handles your routes or that 404's are directed back to `index.html` (which is how the dev server is set up).
-
-**To enable dead code elimination**, change `bsconfig.json`'s `package-specs` `module` from `"commonjs"` to `"es6"`. Then re-run the above 2 commands. This will allow Webpack to remove unused code.
