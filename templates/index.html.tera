@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Mascarpone Internet Filter</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      window.pageLoadBlacklist = {{ blacklist|safe }};
+    </script>
+    <script src="./Index.js"></script>
+  </body>
+</html>
