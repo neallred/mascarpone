@@ -1,6 +1,6 @@
 # Mascarpone
 
-* DEPRECATED! * Use pihole instead; its way more fleshed out and more maintained.
+*DEPRECATED!* Use pihole instead; its way more fleshed out and more maintained.
 
 Use `dnsmasq` to filter out content.
 
