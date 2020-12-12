@@ -1,5 +1,7 @@
 # Mascarpone
 
+* DEPRECATED! * Use pihole instead; its way more fleshed out and more maintained.
+
 Use `dnsmasq` to filter out content.
 
 Configure and restart dnsmasq via a web server and client.
